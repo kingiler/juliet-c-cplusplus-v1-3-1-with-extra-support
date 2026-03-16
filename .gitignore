@@ -1,0 +1,20 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+.cache/
+.vscode/
+testcases/
+build/
+sarifs.json
+manifest.json
+testcases.json
+compile_commands.json
+CMakeLists.txt

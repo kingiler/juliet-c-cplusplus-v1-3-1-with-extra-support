@@ -1,0 +1,90 @@
+We are pleased to announce the release of Juliet 1.3.
+
+Juliet 1.3 consists of tens of thousands of small test cases in C/C++ and Java exhibiting over 100 classes of errors.  It replaces Juliet 1.2.  The C/C++ part contains 64 099 test cases and more than 100 000 files.  The Java part contains 28 886 test cases and more than 46 000 files.  Both parts also include files, scripts, headers, etc. to compile the test cases, either as one program per test cases or everything in one language together.  These cases should be useful in both Linux and Microsoft Windows environments.  The Juliet test suite was originally developed by the NSA Center for Assured Software and first released in December 2010.  
+
+
+Juliet 1.3 fixes about two dozen systematic problems found in version 1.2, released in May 2013.  The fixes changed 21 552 files.  We thank all those who reported problems in 1.2.  Following is a very brief description of the changes from version 1.2. We list more important changes first.
+
+Create test cases for pre- (++i) and postincrement (i++) overflow
+(CWE190) and pre- (--i) and postdecrement (i--) underflow (CWE191).
+This adds 3404 Java cases (5612 files) and 2736 C cases (4032 files).
+
+Fix 104 C test cases so that they actually have BOF.  Also fix CWE121
+Stack-based Buffer Overflow cases to allocate on the stack.
+
+Fix 144 C test cases to not have unintended BOF/read/above for 64-bit
+architectures.
+
+Remove 24 C test cases (51 files) in CWE121 that use stack-allocated
+(alloca) memory after its lifetime.  We could not see any way to fix
+the cases and still fulfill their test purposes.
+
+Add simple NULL checks after malloc(), calloc(), or realloc() in 11 619
+files across 20 CWEs.  Without this check, a possible NULL pointer
+dereference causes an undefined state.
+
+Fix 294 C files in CWE121 and CWE476 NULL Pointer Dereference to
+initialize both members of a structure. The code was something like
+    ...intOne = 1;
+    ...intOne = 1;
+and it is now
+    ...intOne = 1;
+    ...intTwo = 1;
+
+Fix the undefined behavior in the random number macros, RAND32 and
+RAND64.  They used to shift signed integers out of range.
+
+Fix 168 C files in CWE476 that accessed automatically allocated
+memory after its lifetime.
+
+Fix exactly 5200 test cases (8120 files) in CWE78 OS Command Injection
+to actually have OS injection on Linux.
+
+Use the more secure mkstemp() in 54 files in CWE377 Insecure
+Temporary File and 18 files in CWE459 Incomplete Cleanup.
+
+Fix 288 C files in CWE190 to correctly check for values out of
+range. The problem is that abs(INT_MIN) is still INT_MIN, which is
+negative.  Also for int_64, use labs() or llabs() instead of abs().
+
+Fix 178 C files in 144 test cases in CWE190 to use the correct
+absolute value and square root functions and scanf formats for int64_t
+variables.
+
+Change the overflow check in 144 C files in CWE190 because of a
+possible problem with sqrt() if an architecture has a 64-bit int
+type.
+
+Fix 672 files to use swprintf() instead of snprintf() to handle wide
+character strings.
+
+Fix code to use the correct format to fscanf variables of type size_t
+(200 files) and int64_t (352 files).
+
+Fix the support file in io.c to use the correct format to print
+variables of type size_t and of type int64_t.
+
+Change the compile ("make") files and scripts to be far more
+efficient.
+
+
+Even with all these changes, we know of systematic problems in Juliet
+1.3.  We decided not to fix these because the time to fix the code far
+exceeds any small benefit, and we expect NSA to release a brand new
+Juliet 2.0 at the end of this year.
+
+The biggest problem is that the good code in thousands of files
+"fixes" problems by just using a hardcoded value!  For instance, some
+cases in CWE190 Integer Overflow read a value then increments it.
+One "fix" initializes the variable to 2 instead of reading a value.
+Hardcoded values are all over the place.  Nineteen CWEs use
+    data = "foo";
+and there a dozen different kinds of hardcoded constants (hardcoded
+integer, password, string, etc.).
+
+Second, thousands of cases have memory leaks.  That is, memory is
+allocated, but never freed (until the program ends).
+
+Finally, 40 cases have unplanned dead stores. There is no way to fix
+these and still be similar to other variants.
+
