@@ -109,7 +109,7 @@ def populate():
     cwes = collections.defaultdict[str, set[int]](set)
     with zipfile.ZipFile(juliet_path) as juliet:
         if sarifs_path.exists():
-            with open(sarifs_path) as sarifs_file:
+            with rich.progress.open(sarifs_path, "r") as sarifs_file:
                 sarifs = json.load(sarifs_file)
         else:
             with juliet.open("sarifs.json") as sarifs_file:
@@ -194,7 +194,7 @@ def generate(
     """
     Generate CMakeLists.txt for given CWEs.
     """
-    with open("manifest.json") as file:
+    with rich.progress.open("manifest.json", "r") as file:
         manifest = converter.loads(file.read(), Manifest)
     if cwes:
         cwes: set[str] = set(map(lambda cwe: f"CWE-{cwe}", cwes))
